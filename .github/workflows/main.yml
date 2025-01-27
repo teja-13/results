@@ -35,10 +35,8 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/teja-13/results.git
-          
-          # Pull latest changes before pushing
           git fetch origin
-          git reset --hard origin/main  # Reset the local branch to match remote, if needed
+          git merge origin/main --strategy-option=theirs
           git add results.txt
           git commit -m "Update results.txt"
           git push
