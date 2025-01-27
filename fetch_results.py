@@ -3,9 +3,9 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
-import tempfile
 import time
+import tempfile
+from selenium.webdriver.chrome.options import Options
 
 def is_website_live(url):
     """
@@ -32,14 +32,16 @@ def fetch_results(url, roll_numbers, output_file):
         if is_website_live(url):
             print("Website is live. Launching browser to fetch results...")
             
-            # Create a temporary directory to avoid conflicts
+            # Create a temporary directory to avoid conflicts with user data
             temp_dir = tempfile.mkdtemp()
 
-            # Set up Chrome options
+            # Initialize Chrome options for headless mode and user data directory
             chrome_options = Options()
             chrome_options.add_argument(f'--user-data-dir={temp_dir}')  # Set a unique user data directory
+            chrome_options.add_argument('--headless')  # Run Chrome in headless mode (no GUI)
+            chrome_options.add_argument('--disable-gpu')  # Disable GPU acceleration (useful for CI/CD)
 
-            # Initialize the WebDriver with the options
+            # Initialize Selenium WebDriver with options
             driver = webdriver.Chrome(options=chrome_options)
 
             try:
@@ -81,7 +83,7 @@ def fetch_results(url, roll_numbers, output_file):
             time.sleep(60)
 
 # Example Usage
-url = "https://www.vvitguntur.com/results/R23/Y23_1-2_REGULAR_JUL24/results.html"
+url = "https://www.vvitguntur.com/results/R23/Y23_2-1_REGULAR_JAN25/results.html"
 roll_numbers = ["23bq1a0524", "23bq1a4218", "23bq1a0566", "23bq1a0579", "23bq1a05b6", "23bq1a05f5"]  # Replace with actual roll numbers
 output_file = "results.txt"
 
