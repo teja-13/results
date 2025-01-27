@@ -1,0 +1,39 @@
+name: Check Website and Fetch Results
+
+on:
+  schedule:
+    - cron: "*/1 * * * *"  # Run every 1 minute
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  check-website:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9  # Choose the Python version you want to use
+
+      # Install required dependencies
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      # Run the Python script
+      - name: Run fetch_results.py
+        run: python fetch_results.py
+
+      # Commit and push the results.txt to the repository
+      - name: Commit results to the repository
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add results.txt
+          git commit -m "Update results.txt"
+          git push
