@@ -3,6 +3,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
+import tempfile
 import time
 
 def is_website_live(url):
@@ -30,8 +32,15 @@ def fetch_results(url, roll_numbers, output_file):
         if is_website_live(url):
             print("Website is live. Launching browser to fetch results...")
             
-            # Initialize Selenium WebDriver
-            driver = webdriver.Chrome()
+            # Create a temporary directory to avoid conflicts
+            temp_dir = tempfile.mkdtemp()
+
+            # Set up Chrome options
+            chrome_options = Options()
+            chrome_options.add_argument(f'--user-data-dir={temp_dir}')  # Set a unique user data directory
+
+            # Initialize the WebDriver with the options
+            driver = webdriver.Chrome(options=chrome_options)
 
             try:
                 # Open the results page
