@@ -6,6 +6,11 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import tempfile
 from selenium.webdriver.chrome.options import Options
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
 
 def is_website_live(url):
     """
@@ -23,6 +28,38 @@ def is_website_live(url):
         print(f"Website is not accessible: {e}. Retrying in 1 minute...")
         return False
 
+def send_email_with_attachment(sender_email, receiver_email, email_password, subject, body, file_path):
+    """
+    Send an email with the specified file as an attachment.
+    """
+    try:
+        # Create the email
+        msg = MIMEMultipart()
+        msg['From'] = sender_email
+        msg['To'] = receiver_email
+        msg['Subject'] = subject
+
+        # Add body text
+        msg.attach(MIMEText(body, 'plain'))
+
+        # Attach the file
+        with open(file_path, 'rb') as attachment:
+            part = MIMEBase('application', 'octet-stream')
+            part.set_payload(attachment.read())
+            encoders.encode_base64(part)
+            part.add_header('Content-Disposition', f'attachment; filename={file_path}')
+            msg.attach(part)
+
+        # Connect to the SMTP server and send the email
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(sender_email, email_password)
+            server.send_message(msg)
+
+        print("Email sent successfully!")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+
 def fetch_results(url, roll_numbers, output_file):
     """
     Fetch results for a list of roll numbers from a results website.
@@ -31,7 +68,7 @@ def fetch_results(url, roll_numbers, output_file):
         # Check if the website is live every 1 minute
         if is_website_live(url):
             print("Website is live. Launching browser to fetch results...")
-            
+
             # Create a temporary directory to avoid conflicts with user data
             temp_dir = tempfile.mkdtemp()
 
@@ -74,6 +111,16 @@ def fetch_results(url, roll_numbers, output_file):
                             print(f"Failed to fetch result for Roll Number: {roll_no}: {e}")
 
                 print("Results successfully fetched and stored in the file.")
+
+                # Send the file via email
+                send_email_with_attachment(
+                    sender_email="ch.umachandra@gmail.com",  # Replace with your email
+                    receiver_email="umachandra4821@gmail.com",  # Replace with recipient's email
+                    email_password="qamb xnme qamo ndfd",  # Replace with your email password or app password
+                    subject="Results File",
+                    body="Please find the attached results file.",
+                    file_path=output_file
+                )
                 break  # Exit the loop after fetching results
             finally:
                 # Close the browser
