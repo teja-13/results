@@ -1,0 +1,40 @@
+name: Check Website and Fetch Results 2
+
+on:
+  schedule:
+    - cron: "*/1 * * * *"  # Run every 1 minute
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  check-website-2:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9  # Choose the Python version you want to use
+
+      # Install required dependencies
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      # Run the Python script (fetch_results2.py)
+      - name: Run fetch_results2.py
+        run: python fetch_results2.py
+
+      # Commit and push the results.txt to the repository
+      - name: Commit results to the repository
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/teja-13/results.git
+          git add results.txt
+          git commit -m "Update results2.txt"
+          git push
