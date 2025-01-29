@@ -131,7 +131,7 @@ def fetch_results(url, roll_numbers, output_file):
 
 # Example Usage
 url = "https://www.vvitguntur.com/results/R23/Y23_2-1_REGULAR_DEC24/results.html"
-roll_numbers = ["23bq1a0524", "23bq1a4218", "23bq1a0539", "23bq1a0566", "23bq1a0579", "23bq1a05b6", "23bq1a05f5","23bq1a0532"]  # Replace with actual roll numbers
+roll_numbers = ["23bq1a0524", "23bq1a4218", "23bq1a0539", "23bq1a0566", "23bq1a0579", "23bq1a05b6", "23bq1a05f5","23bq1a0532","23bq1a0510","23bq1a0507","23bq1a0512","23bq1a0520","23bq1a0523","23bq1a0527","23bq1a0531","23bq1a0535","23bq1a0544","23bq1a0546","23bq1a0554","23bq1a0516","23bq1a0519","23bq1a0573"]  # Replace with actual roll numbers
 output_file = "results.txt"
 
 fetch_results(url, roll_numbers, output_file)
